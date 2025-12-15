@@ -1,0 +1,63 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  /* Brand Colors */
+  --color-primary: #4F46E5; /* Trust Indigo */
+  --color-primary-foreground: #FFFFFF;
+  
+  --color-secondary: #F1F5F9; /* Cool Slate */
+  --color-secondary-foreground: #0F172A;
+
+  --color-success: #22C55E; /* Active Green */
+  --color-success-foreground: #FFFFFF;
+
+  --color-destructive: #EF4444; /* Expired Red */
+  --color-destructive-foreground: #FFFFFF;
+
+  /* Backgrounds & Surface */
+  --color-background: #FFFFFF;
+  --color-foreground: #0F172A; /* Deep Navy */
+
+  --color-muted: #F8FAFC;
+  --color-muted-foreground: #64748B; /* Slate Gray */
+  
+  --color-card: #FFFFFF;
+  --color-card-foreground: #0F172A;
+
+  --color-border: #E2E8F0;
+  --color-input: #E2E8F0;
+  --color-ring: #4F46E5;
+
+  /* Fonts */
+  --font-sans: var(--font-hind-siliguri), ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-english: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
+
+  /* Radius */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+}
+
+/* Dark Mode Overrides (Optional / Future Proofing) */
+.dark {
+  --color-background: #0F172A;
+  --color-foreground: #F8FAFC;
+  --color-primary: #6366F1;
+  --color-secondary: #1E293B;
+  --color-card: #1E293B;
+  --color-card-foreground: #F8FAFC;
+  --color-muted: #1E293B;
+  --color-muted-foreground: #94A3B8;
+  --color-border: #334155;
+  --color-input: #334155;
+}
+
+@layer base {
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+}
