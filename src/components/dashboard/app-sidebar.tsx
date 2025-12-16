@@ -11,7 +11,8 @@ import {
     Package,
     Settings,
     LogOut,
-    ShieldCheck
+    ShieldCheck,
+    FileText
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 
@@ -32,6 +33,7 @@ export function AppSidebar() {
 
     const buyerLinks = [
         { href: "/dashboard/buyer", label: "My Warranties", icon: ShieldCheck },
+        { href: "/dashboard/buyer/add", label: "Add Warranty", icon: FileText },
         { href: "/dashboard/buyer/claim", label: "Claim Warranty", icon: PlusCircle },
         // { href: "/dashboard/buyer/profile", label: "Profile", icon: Settings },
     ];

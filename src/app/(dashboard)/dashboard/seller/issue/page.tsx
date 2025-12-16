@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { db } from "@/lib/firebase";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { collection, addDoc, serverTimestamp, doc, getDoc } from "firebase/firestore";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -28,6 +28,22 @@ export default function IssueWarrantyPage() {
     const [purchaseDate, setPurchaseDate] = useState(new Date().toISOString().split("T")[0]);
     const [durationMonths, setDurationMonths] = useState("12");
 
+    // Fetch Business Name
+    const [businessName, setBusinessName] = useState("");
+
+    useState(() => {
+        const fetchProfile = async () => {
+            if (user?.uid) {
+                const docRef = doc(db, "users", user.uid);
+                const snap = await getDoc(docRef);
+                if (snap.exists()) {
+                    setBusinessName(snap.data().businessName || user.displayName || "Official Store");
+                }
+            }
+        };
+        fetchProfile();
+    });
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
@@ -46,7 +62,7 @@ export default function IssueWarrantyPage() {
                 code: newCode,
                 sellerId: user?.uid,
                 sellerEmail: user?.email,
-                sellerName: user?.displayName || "Official Store",
+                sellerName: businessName || user?.displayName || "Official Store",
                 customerName,
                 customerPhone,
                 productModel,
