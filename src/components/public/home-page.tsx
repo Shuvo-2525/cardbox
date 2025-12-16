@@ -64,7 +64,7 @@ export function HomePage({ dict }: HomePageProps) {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.5, delay: 0.3 }}
-                        className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto"
+                        className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto items-center"
                     >
                         <Button asChild size="lg" className="rounded-2xl text-base h-12 px-8 bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 transition-all hover:-translate-y-0.5">
                             <Link href="/register/seller">
@@ -74,6 +74,11 @@ export function HomePage({ dict }: HomePageProps) {
                         <Button asChild variant="outline" size="lg" className="rounded-2xl text-base h-12 px-8 border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900/50 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-all hover:-translate-y-0.5">
                             <Link href="/login/buyer">
                                 {dict.for_buyers}
+                            </Link>
+                        </Button>
+                        <Button asChild variant="ghost" size="lg" className="rounded-2xl text-base h-12 px-6 text-neutral-600 dark:text-neutral-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition-all">
+                            <Link href="/verify">
+                                <Search className="mr-2 h-4 w-4" /> Verify Warranty
                             </Link>
                         </Button>
                     </motion.div>

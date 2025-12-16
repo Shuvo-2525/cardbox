@@ -17,11 +17,35 @@ export default function DashboardLayout({
     const router = useRouter();
 
     useEffect(() => {
-        if (!loading && !user) {
-            // Simple client-side protection. Middleware is better for robust apps but this works for phase 4.
-            // We'll let the user persist on the page for a split second or show a loading spinner if needed.
-            router.push("/login/seller");
-        }
+        const checkAccess = async () => {
+            if (!loading && !user) {
+                router.push("/login/seller");
+                return;
+            }
+
+            if (user) {
+                try {
+                    // Check onboarding status for sellers
+                    // Note: Optimally this should be in AuthContext, but implementing here for now to avoid context breaking changes
+                    const { doc, getDoc } = await import("firebase/firestore");
+                    const { db } = await import("@/lib/firebase");
+
+                    const userDocRef = doc(db, "users", user.uid);
+                    const userDoc = await getDoc(userDocRef);
+
+                    if (userDoc.exists()) {
+                        const userData = userDoc.data();
+                        if (userData.role === "seller" && !userData.onboardingCompleted) {
+                            router.push("/onboarding/seller");
+                        }
+                    }
+                } catch (error) {
+                    console.error("Error checking onboarding status:", error);
+                }
+            }
+        };
+
+        checkAccess();
     }, [user, loading, router]);
 
     if (loading) {

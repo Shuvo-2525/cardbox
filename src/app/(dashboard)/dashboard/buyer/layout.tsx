@@ -9,14 +9,19 @@ export default function BuyerDashboardLayout({
 }: {
     children: React.ReactNode;
 }) {
-    const { user, loading } = useAuth();
+    const { user, userRole, loading } = useAuth();
     const router = useRouter();
 
     useEffect(() => {
-        if (!loading && !user) {
-            router.push("/login/buyer");
+        if (!loading) {
+            if (!user) {
+                router.push("/login/buyer");
+            } else if (userRole && userRole !== "buyer") {
+                // If logged in as Seller but trying to access Buyer, boot them out
+                router.push("/dashboard/seller");
+            }
         }
-    }, [user, loading, router]);
+    }, [user, userRole, loading, router]);
 
     if (loading) {
         return (
