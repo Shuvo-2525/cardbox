@@ -9,10 +9,21 @@ import { collection, query, where, getDocs } from "firebase/firestore";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
-export function VerifyForm({ dict }: { dict: any }) {
+interface WarrantyResult {
+    id: string;
+    status: string;
+    productModel: string;
+    serialNumber: string;
+    sellerName?: string;
+    customerName: string;
+    durationMonths: number;
+    expiryDate: string;
+}
+
+export function VerifyForm({ dict }: { dict: Record<string, string> }) {
     const [searchQuery, setSearchQuery] = useState("");
     const [loading, setLoading] = useState(false);
-    const [result, setResult] = useState<any | null>(null);
+    const [result, setResult] = useState<WarrantyResult | null>(null);
     const [error, setError] = useState("");
     const [hasSearched, setHasSearched] = useState(false);
 
@@ -39,8 +50,8 @@ export function VerifyForm({ dict }: { dict: any }) {
             }
 
             if (!snapshot.empty) {
-                const doc = snapshot.docs[0];
-                setResult({ id: doc.id, ...doc.data() });
+                const docSnap = snapshot.docs[0];
+                setResult({ id: docSnap.id, ...docSnap.data() } as WarrantyResult);
             } else {
                 setError("Warranty not found. Please check the code or serial number.");
             }

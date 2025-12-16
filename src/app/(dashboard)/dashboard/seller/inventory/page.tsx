@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { db } from "@/lib/firebase";
 import { collection, query, where, orderBy, getDocs } from "firebase/firestore";
+import { Package } from "lucide-react";
 import {
     Table,
     TableBody,
@@ -89,42 +90,45 @@ export default function InventoryPage() {
                 <p className="text-neutral-500 mt-2">Manage all warranties issued by your store.</p>
             </div>
 
-            <div className="bg-white dark:bg-neutral-950 rounded-xl border shadow-sm overflow-hidden">
+            <div className="bg-white dark:bg-neutral-950 rounded-2xl shadow-sm border-none overflow-hidden">
                 <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead>Code</TableHead>
-                            <TableHead>Product</TableHead>
-                            <TableHead>Customer</TableHead>
-                            <TableHead>Sales Date</TableHead>
-                            <TableHead>Expiry</TableHead>
-                            <TableHead>Status</TableHead>
+                    <TableHeader className="bg-neutral-50/50 dark:bg-neutral-900/50">
+                        <TableRow className="hover:bg-transparent border-b border-neutral-100 dark:border-neutral-800">
+                            <TableHead className="font-semibold text-neutral-900 dark:text-neutral-100">Code</TableHead>
+                            <TableHead className="font-semibold text-neutral-900 dark:text-neutral-100">Product</TableHead>
+                            <TableHead className="font-semibold text-neutral-900 dark:text-neutral-100">Customer</TableHead>
+                            <TableHead className="font-semibold text-neutral-900 dark:text-neutral-100">Sales Date</TableHead>
+                            <TableHead className="font-semibold text-neutral-900 dark:text-neutral-100">Expiry</TableHead>
+                            <TableHead className="font-semibold text-neutral-900 dark:text-neutral-100">Status</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         {warranties.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={6} className="text-center py-10 text-neutral-500">
-                                    No warranties issued yet.
+                                <TableCell colSpan={6} className="text-center py-16 text-neutral-500">
+                                    <div className="flex flex-col items-center justify-center gap-2">
+                                        <Package className="h-8 w-8 text-neutral-300" />
+                                        <p>No warranties issued yet.</p>
+                                    </div>
                                 </TableCell>
                             </TableRow>
                         ) : (
                             warranties.map((w) => (
-                                <TableRow key={w.id}>
-                                    <TableCell className="font-mono font-medium">{w.code}</TableCell>
+                                <TableRow key={w.id} className="hover:bg-neutral-50/50 dark:hover:bg-neutral-900/50 border-b border-neutral-50 dark:border-neutral-900">
+                                    <TableCell className="font-mono font-medium text-blue-600">{w.code}</TableCell>
                                     <TableCell>
-                                        <div className="font-medium">{w.productModel}</div>
+                                        <div className="font-medium text-neutral-900 dark:text-neutral-100">{w.productModel}</div>
                                         <div className="text-xs text-neutral-500">{w.serialNumber}</div>
                                     </TableCell>
                                     <TableCell>
-                                        <div>{w.customerName}</div>
+                                        <div className="text-neutral-900 dark:text-neutral-100">{w.customerName}</div>
                                         <div className="text-xs text-neutral-500">{w.customerPhone}</div>
                                     </TableCell>
-                                    <TableCell>{formatDate(w.purchaseDate)}</TableCell>
-                                    <TableCell>{formatDate(w.expiryDate)}</TableCell>
+                                    <TableCell className="text-neutral-500">{formatDate(w.purchaseDate)}</TableCell>
+                                    <TableCell className="text-neutral-500">{formatDate(w.expiryDate)}</TableCell>
                                     <TableCell>
                                         <Badge variant={w.status === 'active' ? 'default' : 'destructive'}
-                                            className={w.status === 'active' ? "bg-green-100 text-green-700 hover:bg-green-100 border-none" : ""}>
+                                            className={w.status === 'active' ? "bg-green-100 text-green-700 hover:bg-green-100 border-none shadow-none" : "shadow-none"}>
                                             {w.status}
                                         </Badge>
                                     </TableCell>

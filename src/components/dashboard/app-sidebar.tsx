@@ -73,7 +73,7 @@ export function AppSidebar() {
             <div className="absolute bottom-4 w-full px-4">
                 <div className="flex items-center gap-3 mb-4 px-2">
                     <Avatar className="h-8 w-8">
-                        <AvatarImage src={user?.photoURL || ""} />
+                        {user?.photoURL && <AvatarImage src={user.photoURL} />}
                         <AvatarFallback>{user?.email?.charAt(0).toUpperCase() || "U"}</AvatarFallback>
                     </Avatar>
                     <div className="flex-1 min-w-0">

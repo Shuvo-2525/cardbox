@@ -10,6 +10,14 @@ import { Button } from "@/components/ui/button";
 import { ShieldCheck, AlertTriangle, PlusCircle, Package } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
+import {
+    Sheet,
+    SheetContent,
+    SheetDescription,
+    SheetHeader,
+    SheetTitle,
+    SheetTrigger,
+} from "@/components/ui/sheet";
 
 export default function BuyerDashboard() {
     const { user } = useAuth();
@@ -58,6 +66,16 @@ export default function BuyerDashboard() {
         )
     }
 
+    // Helper for history status
+    const getHistoryLabel = (action: string) => {
+        switch (action) {
+            case 'issued': return 'Warranty Issued';
+            case 'claimed': return 'Claimed by Owner';
+            case 'released': return 'Released / Transferred';
+            default: return action;
+        }
+    }
+
     return (
         <div className="space-y-8">
             <div className="flex items-center justify-between">
@@ -99,45 +117,158 @@ export default function BuyerDashboard() {
                 </Card>
             </div>
 
-            <div className="space-y-4">
-                <h2 className="text-xl font-semibold">Your Protected Products</h2>
-
-                <div className="grid gap-4">
-                    {warranties.length === 0 ? (
-                        <div className="text-center py-12 bg-neutral-50 dark:bg-neutral-900 rounded-xl border border-dashed">
-                            <Package className="h-10 w-10 text-neutral-300 mx-auto mb-3" />
-                            <p className="text-neutral-500">No warranties claimed yet.</p>
-                            <Button variant="link" asChild className="text-blue-600">
-                                <Link href="/dashboard/buyer/claim">Claim your first warranty</Link>
-                            </Button>
-                        </div>
-                    ) : (
-                        warranties.map((w) => (
-                            <div key={w.id} className="flex items-center justify-between p-4 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-sm hover:border-blue-200 dark:hover:border-blue-800 transition-colors">
-                                <div className="flex items-center gap-4">
-                                    <div className="h-12 w-12 rounded-lg bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center shrink-0">
-                                        <Package className="h-6 w-6 text-neutral-400" />
-                                    </div>
-                                    <div className="min-w-0">
-                                        <h3 className="font-semibold text-neutral-900 dark:text-neutral-100 truncate">{w.productModel}</h3>
-                                        <p className="text-sm text-neutral-500 truncate">S/N: {w.serialNumber}</p>
-                                    </div>
-                                </div>
-                                <div className="text-right shrink-0 ml-4">
-                                    <Badge className="bg-green-100 text-green-700 hover:bg-green-100 dark:bg-green-900/30 dark:text-green-400 border-none shadow-none">
-                                        Active
-                                    </Badge>
-                                    <p className="text-xs text-neutral-400 mt-1">Exp: {w.expiryDate}</p>
-                                    <div className="mt-2">
-                                        <Button asChild variant="ghost" size="sm" className="h-7 text-xs text-blue-600 hover:text-blue-700">
-                                            <Link href={`/dashboard/buyer/transfer/${w.id}`}>Transfer</Link>
-                                        </Button>
-                                    </div>
-                                </div>
-                            </div>
-                        ))
-                    )}
+            <div className="space-y-6">
+                <div className="flex items-center justify-between">
+                    <div>
+                        <h2 className="text-xl font-semibold tracking-tight">Your Warranties</h2>
+                        <p className="text-sm text-neutral-500">Manage and view details of your products.</p>
+                    </div>
+                    {/* Potential place for a filter or view toggle */}
                 </div>
+
+                {warranties.length === 0 ? (
+                    <div className="text-center py-20 bg-white dark:bg-neutral-900 rounded-2xl shadow-sm">
+                        <div className="bg-neutral-100 dark:bg-neutral-800 h-16 w-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <Package className="h-8 w-8 text-neutral-400" />
+                        </div>
+                        <h3 className="text-lg font-medium text-neutral-900 dark:text-neutral-100">No warranties yet</h3>
+                        <p className="text-neutral-500 max-w-xs mx-auto mt-2">
+                            When you purchase a product, the warranty will appear here.
+                        </p>
+                        <Button asChild className="mt-6" variant="outline">
+                            <Link href="/dashboard/buyer/claim">Claim a Warranty</Link>
+                        </Button>
+                    </div>
+                ) : (
+                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                        {warranties.map((w) => (
+                            <Sheet key={w.id}>
+                                <SheetTrigger asChild>
+                                    <div className="group relative bg-white dark:bg-neutral-900 rounded-2xl p-5 shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer border border-transparent hover:border-blue-100 dark:hover:border-blue-900/30">
+                                        <div className="flex justify-between items-start mb-4">
+                                            <div className="h-10 w-10 rounded-full bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center group-hover:bg-blue-600 transition-colors">
+                                                <Package className="h-5 w-5 text-blue-600 group-hover:text-white transition-colors" />
+                                            </div>
+                                            <Badge variant={w.status === 'active' ? 'default' : 'secondary'}
+                                                className={w.status === 'active' ? "bg-green-100 text-green-700 hover:bg-green-100 dark:bg-green-900/30 dark:text-green-400 shadow-none border-none" : ""}>
+                                                {w.status}
+                                            </Badge>
+                                        </div>
+
+                                        <div className="space-y-1 mb-4">
+                                            <h3 className="font-bold text-lg text-neutral-900 dark:text-neutral-50 truncate" title={w.productModel}>
+                                                {w.productModel}
+                                            </h3>
+                                            <p className="text-xs text-neutral-500 uppercase tracking-wider font-medium">
+                                                S/N: {w.serialNumber}
+                                            </p>
+                                        </div>
+
+                                        <div className="flex items-center justify-between text-xs text-neutral-500 pt-4 border-t border-dashed border-neutral-100 dark:border-neutral-800">
+                                            <span>Expires</span>
+                                            <span className="font-mono font-medium text-neutral-700 dark:text-neutral-300">
+                                                {w.expiryDate}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </SheetTrigger>
+                                <SheetContent className="overflow-y-auto w-full sm:max-w-md p-0 bg-white dark:bg-neutral-950 border-l border-neutral-200 dark:border-neutral-800 shadow-2xl">
+                                    <div className="flex flex-col h-full">
+                                        <div className="bg-neutral-50/50 dark:bg-neutral-900/50 p-6 border-b border-neutral-200 dark:border-neutral-800">
+                                            <SheetHeader className="text-left space-y-4">
+                                                <div className="flex items-start justify-between">
+                                                    <div className="bg-white dark:bg-neutral-900 p-3 rounded-xl shadow-sm border border-neutral-100 dark:border-neutral-800">
+                                                        <Package className="h-8 w-8 text-blue-600" />
+                                                    </div>
+                                                    <Badge className="bg-green-100 text-green-700 hover:bg-green-100 dark:bg-green-900/30 dark:text-green-400 border-none shadow-none text-sm px-3 py-1">
+                                                        Active
+                                                    </Badge>
+                                                </div>
+                                                <div>
+                                                    <SheetTitle className="text-2xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50 mb-1">{w.productModel}</SheetTitle>
+                                                    <SheetDescription className="flex items-center gap-2 text-neutral-500">
+                                                        <span className="font-mono bg-neutral-100 dark:bg-neutral-800 px-2 py-0.5 rounded text-xs tracking-wider">S/N: {w.serialNumber}</span>
+                                                    </SheetDescription>
+                                                </div>
+                                            </SheetHeader>
+                                        </div>
+
+                                        <div className="flex-1 overflow-y-auto">
+                                            <div className="p-6 space-y-8">
+                                                {/* Status Section */}
+                                                <div className="space-y-4">
+                                                    <div className="flex items-center gap-2 mb-2">
+                                                        <ShieldCheck className="h-4 w-4 text-blue-600" />
+                                                        <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 uppercase tracking-wider">Warranty Details</h3>
+                                                    </div>
+                                                    <div className="grid grid-cols-2 gap-4">
+                                                        <div className="bg-neutral-50 dark:bg-neutral-900/50 p-4 rounded-xl border border-neutral-100 dark:border-neutral-800">
+                                                            <p className="text-xs text-neutral-500 mb-1">Expiry Date</p>
+                                                            <p className="font-semibold text-neutral-900 dark:text-neutral-100 font-mono">{w.expiryDate}</p>
+                                                        </div>
+                                                        <div className="bg-neutral-50 dark:bg-neutral-900/50 p-4 rounded-xl border border-neutral-100 dark:border-neutral-800">
+                                                            <p className="text-xs text-neutral-500 mb-1">Issued By</p>
+                                                            <p className="font-semibold text-blue-600 truncate">{w.sellerName || "Official Store"}</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <hr className="my-6 border-neutral-100 dark:border-neutral-800" />
+
+                                                {/* History Timeline */}
+                                                <div className="space-y-4">
+                                                    <div className="flex items-center gap-2 mb-4">
+                                                        <div className="h-4 w-4 rounded-full border-2 border-neutral-300 dark:border-neutral-700 grid place-items-center">
+                                                            <div className="h-1.5 w-1.5 rounded-full bg-neutral-300 dark:bg-neutral-700" />
+                                                        </div>
+                                                        <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 uppercase tracking-wider">Journey History</h3>
+                                                    </div>
+
+                                                    <div className="relative border-l-2 border-neutral-200 dark:border-neutral-800 ml-2 space-y-8 py-2">
+                                                        {w.history?.map((event: any, i: number) => (
+                                                            <div key={i} className="pl-6 relative group">
+                                                                <div className="absolute left-[-5px] top-1.5 h-2.5 w-2.5 rounded-full bg-white dark:bg-neutral-900 border-2 border-blue-500 group-hover:bg-blue-500 group-hover:scale-125 transition-all" />
+                                                                <div className="flex flex-col">
+                                                                    <span className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+                                                                        {getHistoryLabel(event.action)}
+                                                                    </span>
+                                                                    <span className="text-xs text-neutral-500 mt-1 font-mono">
+                                                                        {new Date(event.date?.toDate ? event.date.toDate() : event.date).toLocaleDateString(undefined, {
+                                                                            year: 'numeric', month: 'short', day: 'numeric'
+                                                                        })}
+                                                                    </span>
+                                                                    {event.user && (
+                                                                        <div className="mt-2 text-xs bg-neutral-50 dark:bg-neutral-900 inline-block px-2 py-1 rounded border border-neutral-100 dark:border-neutral-800 text-neutral-500 truncate max-w-[220px]">
+                                                                            {event.user}
+                                                                        </div>
+                                                                    )}
+                                                                </div>
+                                                            </div>
+                                                        ))}
+                                                        {(!w.history || w.history.length === 0) && (
+                                                            <div className="pl-6 text-sm text-neutral-500 italic">No history available</div>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="p-6 border-t border-neutral-200 dark:border-neutral-800 bg-neutral-50/30 dark:bg-neutral-900/30">
+                                            <Button className="w-full bg-blue-600 hover:bg-blue-700 h-11 text-base shadow-lg hover:shadow-xl transition-all" asChild>
+                                                <Link href={`/dashboard/buyer/transfer/${w.id}`}>
+                                                    Transfer Ownership
+                                                </Link>
+                                            </Button>
+                                            <p className="text-[10px] text-center text-neutral-400 mt-3">
+                                                Transferring will generate a unique code for the new owner.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </SheetContent>
+                            </Sheet>
+                        ))}
+                    </div>
+                )}
             </div>
         </div>
     );

@@ -6,7 +6,7 @@ import { useAuth } from "@/context/AuthContext";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
 
-export function Navbar({ dict }: { dict: any }) {
+export function Navbar({ dict }: { dict: Record<string, string> }) {
     const { user, userRole, loading } = useAuth();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 

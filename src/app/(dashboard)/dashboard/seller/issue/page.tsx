@@ -97,38 +97,38 @@ export default function IssueWarrantyPage() {
                 </Alert>
             )}
 
-            <div className="bg-white dark:bg-neutral-950 p-6 rounded-xl border shadow-sm">
+            <div className="bg-white dark:bg-neutral-950 p-8 rounded-2xl shadow-xl border-none">
                 <form onSubmit={handleSubmit} className="space-y-6">
-                    <div className="grid gap-4 md:grid-cols-2">
+                    <div className="grid gap-6 md:grid-cols-2">
                         <div className="space-y-2">
-                            <Label>Customer Name</Label>
-                            <Input required value={customerName} onChange={e => setCustomerName(e.target.value)} placeholder="e.g. Rahim Ahmed" />
+                            <Label className="text-neutral-500">Customer Name</Label>
+                            <Input className="h-11 bg-neutral-50 dark:bg-neutral-900 border-transparent focus:bg-white dark:focus:bg-neutral-950 focus:border-blue-500/50 transition-all" required value={customerName} onChange={e => setCustomerName(e.target.value)} placeholder="e.g. Rahim Ahmed" />
                         </div>
                         <div className="space-y-2">
-                            <Label>Phone Number</Label>
-                            <Input required value={customerPhone} onChange={e => setCustomerPhone(e.target.value)} placeholder="e.g. 017..." />
+                            <Label className="text-neutral-500">Phone Number</Label>
+                            <Input className="h-11 bg-neutral-50 dark:bg-neutral-900 border-transparent focus:bg-white dark:focus:bg-neutral-950 focus:border-blue-500/50 transition-all" required value={customerPhone} onChange={e => setCustomerPhone(e.target.value)} placeholder="e.g. 017..." />
                         </div>
                     </div>
 
                     <div className="space-y-2">
-                        <Label>Product Model</Label>
-                        <Input required value={productModel} onChange={e => setProductModel(e.target.value)} placeholder="e.g. Samsung Inverter AC 1.5T" />
+                        <Label className="text-neutral-500">Product Model</Label>
+                        <Input className="h-11 bg-neutral-50 dark:bg-neutral-900 border-transparent focus:bg-white dark:focus:bg-neutral-950 focus:border-blue-500/50 transition-all" required value={productModel} onChange={e => setProductModel(e.target.value)} placeholder="e.g. Samsung Inverter AC 1.5T" />
                     </div>
 
                     <div className="space-y-2">
-                        <Label>Serial Number / IMEI</Label>
-                        <Input required value={serialNumber} onChange={e => setSerialNumber(e.target.value)} placeholder="Unique ID on device" />
+                        <Label className="text-neutral-500">Serial Number / IMEI</Label>
+                        <Input className="h-11 bg-neutral-50 dark:bg-neutral-900 border-transparent focus:bg-white dark:focus:bg-neutral-950 focus:border-blue-500/50 transition-all" required value={serialNumber} onChange={e => setSerialNumber(e.target.value)} placeholder="Unique ID on device" />
                     </div>
 
-                    <div className="grid gap-4 md:grid-cols-2">
+                    <div className="grid gap-6 md:grid-cols-2">
                         <div className="space-y-2">
-                            <Label>Purchase Date</Label>
-                            <Input type="date" required value={purchaseDate} onChange={e => setPurchaseDate(e.target.value)} />
+                            <Label className="text-neutral-500">Purchase Date</Label>
+                            <Input className="h-11 bg-neutral-50 dark:bg-neutral-900 border-transparent focus:bg-white dark:focus:bg-neutral-950 focus:border-blue-500/50 transition-all" type="date" required value={purchaseDate} onChange={e => setPurchaseDate(e.target.value)} />
                         </div>
                         <div className="space-y-2">
-                            <Label>Warranty Duration</Label>
+                            <Label className="text-neutral-500">Warranty Duration</Label>
                             <Select value={durationMonths} onValueChange={setDurationMonths}>
-                                <SelectTrigger>
+                                <SelectTrigger className="h-11 bg-neutral-50 dark:bg-neutral-900 border-transparent focus:border-blue-500/50">
                                     <SelectValue placeholder="Select duration" />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -142,7 +142,7 @@ export default function IssueWarrantyPage() {
                         </div>
                     </div>
 
-                    <Button type="submit" size="lg" className="w-full bg-blue-600 hover:bg-blue-700" disabled={loading}>
+                    <Button type="submit" size="lg" className="w-full bg-blue-600 hover:bg-blue-700 h-12 text-base shadow-lg hover:shadow-blue-500/25 transition-all" disabled={loading}>
                         {loading ? "Issuing..." : "Activate Warranty"}
                     </Button>
                 </form>

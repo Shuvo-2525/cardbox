@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { db } from "@/lib/firebase";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
@@ -17,7 +17,8 @@ import {
     CardTitle,
 } from "@/components/ui/card";
 
-export default function TransferWarrantyPage({ params }: { params: { id: string } }) {
+export default function TransferWarrantyPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = use(params);
     const { user } = useAuth();
     const router = useRouter();
     const [warranty, setWarranty] = useState<any>(null);
@@ -36,7 +37,7 @@ export default function TransferWarrantyPage({ params }: { params: { id: string 
         const fetchWarranty = async () => {
             if (!user) return;
             try {
-                const docRef = doc(db, "warranties", params.id);
+                const docRef = doc(db, "warranties", id);
                 const docSnap = await getDoc(docRef);
 
                 if (docSnap.exists()) {
@@ -57,7 +58,7 @@ export default function TransferWarrantyPage({ params }: { params: { id: string 
             }
         };
         fetchWarranty();
-    }, [user, params.id, router]);
+    }, [user, id, router]);
 
     const handleTransfer = async () => {
         if (!confirm("Are you sure? This will remove the warranty from your account.")) return;
@@ -71,8 +72,15 @@ export default function TransferWarrantyPage({ params }: { params: { id: string 
                 // We keep the claimedAt history or clear it? 
                 // Let's clear it so it looks "fresh" for the next claim, or keep history in a separate collection ideally.
                 // For MVP:
-                previousOwner: user?.email,
-                transferredAt: new Date().toISOString()
+                transferredAt: new Date().toISOString(),
+                history: [
+                    ...(warranty.history || []),
+                    {
+                        action: "released",
+                        user: user?.email,
+                        date: new Date().toISOString()
+                    }
+                ]
             });
 
             setTransferredCode(warranty.code);

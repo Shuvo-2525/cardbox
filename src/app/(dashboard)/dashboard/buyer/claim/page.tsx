@@ -55,7 +55,15 @@ export default function ClaimWarrantyPage() {
             await updateDoc(doc(db, "warranties", warrantyDoc.id), {
                 buyerId: user?.uid,
                 buyerEmail: user?.email,
-                claimedAt: serverTimestamp()
+                claimedAt: serverTimestamp(),
+                history: [
+                    ...(warrantyData.history || []),
+                    {
+                        action: "claimed",
+                        user: user?.email,
+                        date: new Date().toISOString()
+                    }
+                ]
             });
 
             setSuccess(true);
@@ -96,31 +104,31 @@ export default function ClaimWarrantyPage() {
                 </Alert>
             )}
 
-            <div className="bg-white dark:bg-neutral-950 p-6 rounded-xl border shadow-sm">
+            <div className="bg-white dark:bg-neutral-950 p-8 rounded-2xl shadow-xl border-none">
                 <form onSubmit={handleClaim} className="space-y-6">
                     <div className="space-y-2">
-                        <Label>Warranty Code</Label>
+                        <Label className="text-neutral-500">Warranty Code</Label>
                         <Input
                             required
                             value={code}
                             onChange={e => setCode(e.target.value.toUpperCase())}
                             placeholder="e.g. CB-K9L-M3P"
-                            className="font-mono text-center text-lg tracking-widest uppercase"
+                            className="font-mono text-center text-lg tracking-widest uppercase h-14 bg-neutral-50 dark:bg-neutral-900 border-transparent focus:bg-white dark:focus:bg-neutral-950 focus:border-blue-500/50 transition-all font-bold"
                         />
                     </div>
 
                     <div className="space-y-2">
-                        <Label>Purchase Date (Verify)</Label>
+                        <Label className="text-neutral-500">Purchase Date (Verify)</Label>
                         <Input
                             type="date"
                             value={purchaseDate}
                             onChange={e => setPurchaseDate(e.target.value)}
-                            className="text-center"
+                            className="text-center h-11 bg-neutral-50 dark:bg-neutral-900 border-transparent focus:bg-white dark:focus:bg-neutral-950 focus:border-blue-500/50 transition-all"
                         />
-                        <p className="text-xs text-neutral-400 text-center">Optional: Matches invoice date</p>
+                        <p className="text-xs text-neutral-400 text-center mt-1">Optional: Matches invoice date</p>
                     </div>
 
-                    <Button type="submit" size="lg" className="w-full bg-blue-600 hover:bg-blue-700" disabled={loading || success}>
+                    <Button type="submit" size="lg" className="w-full bg-blue-600 hover:bg-blue-700 h-12 text-base shadow-lg hover:shadow-blue-500/25 transition-all" disabled={loading || success}>
                         {loading ? "Verifying..." : "Claim Warranty"}
                     </Button>
                 </form>
