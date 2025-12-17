@@ -11,7 +11,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useRouter } from "next/navigation";
 import { ShoppingBag, Calendar, Loader2 } from "lucide-react";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 export default function AddManualWarrantyPage() {
     const { user } = useAuth();
@@ -27,7 +26,6 @@ export default function AddManualWarrantyPage() {
     const [notes, setNotes] = useState("");
 
     // Expiry Logic
-    const [expiryMode, setExpiryMode] = useState<"preset" | "custom">("preset");
     const [durationMonths, setDurationMonths] = useState("12");
     const [customExpiryDate, setCustomExpiryDate] = useState("");
 
@@ -39,7 +37,7 @@ export default function AddManualWarrantyPage() {
             let finalExpiryDate = "";
             let finalDuration = 0;
 
-            if (expiryMode === "preset") {
+            if (durationMonths !== "custom") {
                 const start = new Date(purchaseDate);
                 const expiry = new Date(start);
                 finalDuration = parseInt(durationMonths);
@@ -168,43 +166,32 @@ export default function AddManualWarrantyPage() {
                             {/* Expiry Section */}
                             <div className="space-y-3">
                                 <Label>Warranty Validity</Label>
-                                <RadioGroup
-                                    defaultValue="preset"
-                                    value={expiryMode}
-                                    onValueChange={(v: "preset" | "custom") => setExpiryMode(v)}
-                                    className="flex gap-4 mb-2"
-                                >
-                                    <div className="flex items-center space-x-2">
-                                        <RadioGroupItem value="preset" id="r1" />
-                                        <Label htmlFor="r1" className="cursor-pointer">Duration</Label>
-                                    </div>
-                                    <div className="flex items-center space-x-2">
-                                        <RadioGroupItem value="custom" id="r2" />
-                                        <Label htmlFor="r2" className="cursor-pointer">Custom Date</Label>
-                                    </div>
-                                </RadioGroup>
+                                <Select value={durationMonths} onValueChange={setDurationMonths}>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Select duration" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="6">6 Months</SelectItem>
+                                        <SelectItem value="12">1 Year</SelectItem>
+                                        <SelectItem value="24">2 Years</SelectItem>
+                                        <SelectItem value="36">3 Years</SelectItem>
+                                        <SelectItem value="60">5 Years</SelectItem>
+                                        <SelectItem value="custom">Custom Date Range</SelectItem>
+                                    </SelectContent>
+                                </Select>
 
-                                {expiryMode === "preset" ? (
-                                    <Select value={durationMonths} onValueChange={setDurationMonths}>
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Select duration" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="6">6 Months</SelectItem>
-                                            <SelectItem value="12">1 Year</SelectItem>
-                                            <SelectItem value="24">2 Years</SelectItem>
-                                            <SelectItem value="36">3 Years</SelectItem>
-                                            <SelectItem value="60">5 Years</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                ) : (
-                                    <Input
-                                        type="date"
-                                        required={expiryMode === "custom"}
-                                        value={customExpiryDate}
-                                        onChange={e => setCustomExpiryDate(e.target.value)}
-                                        min={purchaseDate}
-                                    />
+                                {durationMonths === "custom" && (
+                                    <div className="mt-3 animate-in fade-in slide-in-from-top-1">
+                                        <Label className="text-xs text-neutral-500 mb-1.5 block">Warranty Expiry Date</Label>
+                                        <Input
+                                            type="date"
+                                            required={durationMonths === "custom"}
+                                            value={customExpiryDate}
+                                            onChange={e => setCustomExpiryDate(e.target.value)}
+                                            min={purchaseDate}
+                                            className="border-indigo-200 focus-visible:ring-indigo-500 bg-indigo-50/30"
+                                        />
+                                    </div>
                                 )}
                             </div>
                         </div>

@@ -7,7 +7,7 @@ import { doc, getDoc } from "firebase/firestore";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Building2, MapPin, Mail, Phone, ShieldCheck, BadgeCheck } from "lucide-react";
+import { Building2, MapPin, Mail, Phone, ShieldCheck, BadgeCheck, Facebook, Instagram, Twitter, Linkedin, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
@@ -15,13 +15,20 @@ import { Badge } from "@/components/ui/badge";
 interface SellerProfile {
     businessName: string;
     email: string;
-    photoURL?: string;
-    contactPhone?: string;
-    contactAddress?: string;
-    branding?: {
-        logo?: string;
-        color?: string;
+    photoURL?: string; // User profile photo
+    logoUrl?: string; // Company logo from settings
+    supportPhone?: string; // From settings
+    address?: string; // From settings
+    description?: string; // From settings
+    website?: string; // From settings
+    brandColor?: string; // From settings
+    socials?: {
+        facebook?: string;
+        instagram?: string;
+        twitter?: string;
+        linkedin?: string;
     };
+    openingHours?: string;
     isVerified?: boolean;
 }
 
@@ -76,14 +83,19 @@ export default function SellerProfilePage() {
         );
     }
 
+    const brandColor = seller.brandColor || "#4F46E5";
+
     return (
         <div className="max-w-4xl mx-auto space-y-8 pb-12">
             {/* Cover / Header */}
-            <div className="relative h-48 sm:h-64 rounded-xl overflow-hidden bg-gradient-to-r from-blue-600 to-indigo-600">
+            <div
+                className="relative h-48 sm:h-64 rounded-xl overflow-hidden"
+                style={{ background: `linear-gradient(to right, ${brandColor}, ${brandColor}dd)` }}
+            >
                 <div className="absolute inset-0 bg-black/10" />
                 <div className="absolute bottom-6 left-6 flex items-end gap-6">
                     <Avatar className="h-24 w-24 sm:h-32 sm:w-32 border-4 border-white shadow-xl rounded-2xl bg-white">
-                        <AvatarImage src={seller.photoURL} />
+                        <AvatarImage src={seller.logoUrl || seller.photoURL} className="object-contain p-1" />
                         <AvatarFallback className="text-4xl font-bold text-indigo-600 rounded-none bg-white">
                             {seller.businessName?.charAt(0) || "S"}
                         </AvatarFallback>
@@ -93,8 +105,14 @@ export default function SellerProfilePage() {
                             {seller.businessName}
                         </h1>
                         <div className="flex items-center gap-2 mt-1 opacity-90">
-                            <BadgeCheck className="h-5 w-5 text-blue-200" />
-                            <span className="font-medium">Verified Official Seller</span>
+                            {seller.isVerified ? (
+                                <>
+                                    <BadgeCheck className="h-5 w-5 text-blue-200" />
+                                    <span className="font-medium">Verified Official Seller</span>
+                                </>
+                            ) : (
+                                <span className="text-sm bg-white/20 px-2 py-0.5 rounded-full">Seller Profile</span>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -108,20 +126,20 @@ export default function SellerProfilePage() {
                             <CardTitle className="text-lg">Shop Details</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
-                            {seller.contactAddress && (
+                            {seller.address && (
                                 <div className="flex items-start gap-3 text-sm">
                                     <MapPin className="h-4 w-4 text-neutral-400 mt-0.5" />
                                     <span className="text-neutral-600 dark:text-neutral-300">
-                                        {seller.contactAddress}
+                                        {seller.address}
                                     </span>
                                 </div>
                             )}
 
-                            {seller.contactPhone && (
+                            {seller.supportPhone && (
                                 <div className="flex items-center gap-3 text-sm">
                                     <Phone className="h-4 w-4 text-neutral-400" />
                                     <span className="text-neutral-600 dark:text-neutral-300">
-                                        {seller.contactPhone}
+                                        {seller.supportPhone}
                                     </span>
                                 </div>
                             )}
@@ -133,10 +151,58 @@ export default function SellerProfilePage() {
                                 </span>
                             </div>
 
+                            {seller.website && (
+                                <div className="pt-2">
+                                    <Button asChild variant="outline" className="w-full justify-start text-indigo-600 border-indigo-100 dark:border-indigo-900/30 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/10 hover:bg-indigo-100">
+                                        <Link href={seller.website} target="_blank" rel="noopener noreferrer">
+                                            Visit Website
+                                        </Link>
+                                    </Button>
+                                </div>
+                            )}
+
                             <hr className="border-neutral-100 dark:border-neutral-800" />
 
+                            {/* Socials */}
+                            {seller.socials && Object.values(seller.socials).some(v => v) && (
+                                <div className="flex gap-2 justify-center pb-2">
+                                    {seller.socials.facebook && (
+                                        <Link href={seller.socials.facebook} target="_blank" className="p-2 bg-blue-50 text-blue-600 rounded-full hover:bg-blue-100 transition-colors">
+                                            <Facebook className="h-4 w-4" />
+                                        </Link>
+                                    )}
+                                    {seller.socials.instagram && (
+                                        <Link href={seller.socials.instagram} target="_blank" className="p-2 bg-pink-50 text-pink-600 rounded-full hover:bg-pink-100 transition-colors">
+                                            <Instagram className="h-4 w-4" />
+                                        </Link>
+                                    )}
+                                    {seller.socials.twitter && (
+                                        <Link href={seller.socials.twitter} target="_blank" className="p-2 bg-sky-50 text-sky-600 rounded-full hover:bg-sky-100 transition-colors">
+                                            <Twitter className="h-4 w-4" />
+                                        </Link>
+                                    )}
+                                    {seller.socials.linkedin && (
+                                        <Link href={seller.socials.linkedin} target="_blank" className="p-2 bg-indigo-50 text-indigo-600 rounded-full hover:bg-indigo-100 transition-colors">
+                                            <Linkedin className="h-4 w-4" />
+                                        </Link>
+                                    )}
+                                </div>
+                            )}
+
+                            {/* Hours */}
+                            {seller.openingHours && (
+                                <div className="mt-4 pt-4 border-t border-neutral-100 dark:border-neutral-800">
+                                    <h4 className="text-sm font-semibold mb-2 flex items-center gap-2">
+                                        <Clock className="h-4 w-4 text-neutral-400" /> Opening Hours
+                                    </h4>
+                                    <p className="text-sm text-neutral-600 dark:text-neutral-300 whitespace-pre-line leading-relaxed">
+                                        {seller.openingHours}
+                                    </p>
+                                </div>
+                            )}
+
                             <div className="pt-2">
-                                <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 gap-1">
+                                <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 gap-1 w-full justify-center py-1">
                                     <ShieldCheck className="h-3 w-3" />
                                     Trusted Partner
                                 </Badge>
@@ -155,10 +221,14 @@ export default function SellerProfilePage() {
                             </CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <p className="text-neutral-600 dark:text-neutral-300 leading-relaxed">
-                                This is the official digital profile for <strong>{seller.businessName}</strong>.
-                                By visiting this page, you can verify the identity of the seller who issued your warranty.
-                                We are committed to providing authentic products and reliable after-sales support.
+                            <p className="text-neutral-600 dark:text-neutral-300 leading-relaxed whitespace-pre-wrap">
+                                {seller.description || (
+                                    <>
+                                        This is the official digital profile for <strong>{seller.businessName}</strong>.
+                                        By visiting this page, you can verify the identity of the seller who issued your warranty.
+                                        We are committed to providing authentic products and reliable after-sales support.
+                                    </>
+                                )}
                             </p>
 
                             <div className="grid sm:grid-cols-2 gap-4 mt-8">

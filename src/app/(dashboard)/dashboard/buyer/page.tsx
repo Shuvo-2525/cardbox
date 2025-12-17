@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ShieldCheck, AlertTriangle, PlusCircle, Package } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { motion } from "framer-motion";
 import Link from "next/link";
 import {
     Sheet,
@@ -119,28 +120,68 @@ export default function BuyerDashboard() {
                 </Button>
             </div>
 
-            <div className="grid gap-6 md:grid-cols-2">
-                <Card className="bg-green-50 dark:bg-green-900/10 border-green-200 dark:border-green-800">
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium text-green-700 dark:text-green-400">Active Warranties</CardTitle>
-                        <ShieldCheck className="h-4 w-4 text-green-600 dark:text-green-400" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-3xl font-bold text-green-700 dark:text-green-400">{activeCount}</div>
-                        <p className="text-xs text-green-600 dark:text-green-500">Products currently protected</p>
-                    </CardContent>
-                </Card>
+            <div className="grid gap-6 md:grid-cols-3">
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1 }}
+                >
+                    <Card className="bg-gradient-to-br from-blue-600 to-indigo-600 border-none text-white shadow-lg shadow-blue-500/20 relative overflow-hidden">
+                        <div className="absolute top-0 right-0 p-4 opacity-10">
+                            <Package className="h-24 w-24 transform rotate-12" />
+                        </div>
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative z-10">
+                            <CardTitle className="text-sm font-medium text-blue-100">Total Warranties</CardTitle>
+                            <div className="h-8 w-8 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-sm">
+                                <Package className="h-4 w-4 text-white" />
+                            </div>
+                        </CardHeader>
+                        <CardContent className="relative z-10">
+                            <div className="text-4xl font-bold text-white mb-1">{warranties.length}</div>
+                            <p className="text-xs text-blue-100/80">Lifetime issuances</p>
+                        </CardContent>
+                    </Card>
+                </motion.div>
 
-                <Card className="bg-orange-50 dark:bg-orange-900/10 border-orange-200 dark:border-orange-800">
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium text-orange-700 dark:text-orange-400">Expiring Soon</CardTitle>
-                        <AlertTriangle className="h-4 w-4 text-orange-600 dark:text-orange-400" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-3xl font-bold text-orange-700 dark:text-orange-400">{expiringCount}</div>
-                        <p className="text-xs text-orange-600 dark:text-orange-500">Action needed within 30 days</p>
-                    </CardContent>
-                </Card>
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2 }}
+                >
+                    <Card className="bg-white dark:bg-neutral-900 border-neutral-100 dark:border-neutral-800 shadow-sm relative overflow-hidden group hover:shadow-md transition-shadow">
+                        <div className="absolute right-0 top-0 h-full w-1 bg-green-500/20 group-hover:bg-green-500 transition-colors" />
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                            <CardTitle className="text-sm font-medium text-neutral-500 dark:text-neutral-400">Active Now</CardTitle>
+                            <div className="h-8 w-8 rounded-full bg-green-50 dark:bg-green-900/30 flex items-center justify-center">
+                                <ShieldCheck className="h-4 w-4 text-green-600 dark:text-green-400" />
+                            </div>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-3xl font-bold text-neutral-900 dark:text-neutral-50 mb-1">{activeCount}</div>
+                            <p className="text-xs text-neutral-500">Valid products</p>
+                        </CardContent>
+                    </Card>
+                </motion.div>
+
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 }}
+                >
+                    <Card className="bg-white dark:bg-neutral-900 border-neutral-100 dark:border-neutral-800 shadow-sm relative overflow-hidden group hover:shadow-md transition-shadow">
+                        <div className="absolute right-0 top-0 h-full w-1 bg-orange-500/20 group-hover:bg-orange-500 transition-colors" />
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                            <CardTitle className="text-sm font-medium text-neutral-500 dark:text-neutral-400">Expiring Soon</CardTitle>
+                            <div className="h-8 w-8 rounded-full bg-orange-50 dark:bg-orange-900/30 flex items-center justify-center">
+                                <AlertTriangle className="h-4 w-4 text-orange-600 dark:text-orange-400" />
+                            </div>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-3xl font-bold text-neutral-900 dark:text-neutral-50 mb-1">{expiringCount}</div>
+                            <p className="text-xs text-neutral-500">Within next 30 days</p>
+                        </CardContent>
+                    </Card>
+                </motion.div>
             </div>
 
             <div className="space-y-6">

@@ -27,6 +27,7 @@ export default function IssueWarrantyPage() {
     const [serialNumber, setSerialNumber] = useState("");
     const [purchaseDate, setPurchaseDate] = useState(new Date().toISOString().split("T")[0]);
     const [durationMonths, setDurationMonths] = useState("12");
+    const [customEndDate, setCustomEndDate] = useState("");
 
     // Fetch Business Name
     const [businessName, setBusinessName] = useState("");
@@ -55,8 +56,25 @@ export default function IssueWarrantyPage() {
 
             // Calculate expiry
             const start = new Date(purchaseDate);
-            const expiry = new Date(start);
-            expiry.setMonth(expiry.getMonth() + parseInt(durationMonths));
+            let expiry: Date;
+            let finalDurationMonths = 0;
+
+            if (durationMonths === "custom") {
+                if (!customEndDate) {
+                    alert("Please select an expiry date for custom duration.");
+                    setLoading(false);
+                    return;
+                }
+                expiry = new Date(customEndDate);
+                // Approx duration in months
+                const diffTime = Math.abs(expiry.getTime() - start.getTime());
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                finalDurationMonths = Math.round(diffDays / 30);
+            } else {
+                expiry = new Date(start);
+                finalDurationMonths = parseInt(durationMonths);
+                expiry.setMonth(expiry.getMonth() + finalDurationMonths);
+            }
 
             await addDoc(collection(db, "warranties"), {
                 code: newCode,
@@ -69,7 +87,7 @@ export default function IssueWarrantyPage() {
                 serialNumber,
                 purchaseDate,
                 expiryDate: expiry.toISOString().split("T")[0],
-                durationMonths: parseInt(durationMonths),
+                durationMonths: finalDurationMonths,
                 status: "active",
                 createdAt: serverTimestamp(),
                 locked: false // Initially unlocked for grace period
@@ -233,8 +251,23 @@ export default function IssueWarrantyPage() {
                                             <SelectItem value="24">2 Years</SelectItem>
                                             <SelectItem value="36">3 Years</SelectItem>
                                             <SelectItem value="60">5 Years</SelectItem>
+                                            <SelectItem value="custom">Custom Date Range</SelectItem>
                                         </SelectContent>
                                     </Select>
+
+                                    {durationMonths === "custom" && (
+                                        <div className="mt-3 animate-in fade-in slide-in-from-top-1">
+                                            <Label className="text-xs text-neutral-500 mb-1.5 block">Warranty Expiry Date</Label>
+                                            <Input
+                                                className="h-11 border-indigo-200 focus-visible:ring-indigo-500 bg-indigo-50/30"
+                                                type="date"
+                                                required={durationMonths === "custom"}
+                                                value={customEndDate}
+                                                onChange={e => setCustomEndDate(e.target.value)}
+                                                min={purchaseDate}
+                                            />
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </div>
